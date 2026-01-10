@@ -3,14 +3,14 @@ import clientPromise from "@/app/lib/mongodb";
 
 export async function POST(
 	req: Request,
-	{ params }: { params: { quiz_id: string } }
+	{ params }: { params: Promise<{ quiz_id: string }> }
 ) {
 	try {
-		const quiz_id = parseInt(params.quiz_id, 10);
+		const { quiz_id } = await params;
 
 		// Validate quiz_id
-		if (isNaN(quiz_id)) {
-			return NextResponse.json({ error: "Invalid quiz_id" }, { status: 400 });
+		if (!quiz_id) {
+			return NextResponse.json({ error: "quiz_id is required" }, { status: 400 });
 		}
 
 		// Parse request body
