@@ -1,9 +1,18 @@
 import clientPromise from "./mongodb";
+import { Collection } from "mongodb";
+
+// Define the counter document type
+type CounterDocument = {
+	_id: string;
+	seq: number;
+};
 
 export async function getNextQuizId() {
 	const client = await clientPromise;
 	const db = client.db();
-	const collection = db.collection("counters");
+
+	// Cast the collection to the correct type
+	const collection = db.collection("counters") as Collection<CounterDocument>;
 
 	// Try to increment the counter
 	const result = await collection.findOneAndUpdate(
@@ -11,7 +20,7 @@ export async function getNextQuizId() {
 		{ $inc: { seq: 1 } },
 		{
 			returnDocument: "after",
-			upsert: false, // Don't upsert, we'll handle creation manually
+			upsert: false,
 		}
 	);
 
