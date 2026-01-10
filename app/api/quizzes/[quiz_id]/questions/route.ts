@@ -61,14 +61,16 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 		}
 
 		// Shuffle answer choices for each question
-		const questionsWithShuffledAnswers = questions.map((question) => {
-			const shuffledAnswers = shuffleArray(question.answer_choices);
-			return {
-				question_id: question.question_id,
-				question: question.question,
-				answer_choices: shuffledAnswers,
-			};
-		});
+		const questionsWithShuffledAnswers = questions.map(
+			(question: { answer_choices: unknown[]; question_id: any; question: any }) => {
+				const shuffledAnswers = shuffleArray(question.answer_choices);
+				return {
+					question_id: question.question_id,
+					question: question.question,
+					answer_choices: shuffledAnswers,
+				};
+			}
+		);
 
 		// Create response object
 		const response = {
