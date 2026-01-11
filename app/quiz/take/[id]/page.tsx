@@ -32,6 +32,15 @@ interface GradeResponse {
   percent_correct: number;
   is_passing_score: boolean;
   code_value?: string;
+  stats: {
+    num_attempts: number;
+    num_passes: number;
+    num_fails: number;
+    high_score: number;
+    low_score: number;
+    avg_score: number;
+    pass_rate: number;
+  };
 }
 
 export default function Page() {
@@ -97,6 +106,30 @@ export default function Page() {
             <p className="text-lg text-[#8B4513]">
               ({Math.round(result.percent_correct)}%)
             </p>
+          </div>
+
+          <div className="bg-white/50 p-6 rounded-2xl border-2 border-[#8B4513] w-full text-center">
+            <h2 className="text-xl font-bold text-[#402100] mb-4">
+              Quiz Statistics
+            </h2>
+            <div className="grid grid-cols-2 gap-4 text-[#402100]">
+              <div>
+                <p className="font-bold">Attempts</p>
+                <p>{result.stats.num_attempts}</p>
+              </div>
+              <div>
+                <p className="font-bold">Pass Rate</p>
+                <p>{result.stats.pass_rate}%</p>
+              </div>
+              <div>
+                <p className="font-bold">High Score</p>
+                <p>{result.stats.high_score}%</p>
+              </div>
+              <div>
+                <p className="font-bold">Avg Score</p>
+                <p>{result.stats.avg_score}%</p>
+              </div>
+            </div>
           </div>
 
           {result.is_passing_score && result.code_value && (
