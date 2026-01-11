@@ -36,6 +36,7 @@ export async function GET(
 			min_correct: quiz.min_correct || 0,
 			is_custom_quiz: quiz.is_custom_quiz || false,
 			categories: quiz.categories || null,
+			stats: quiz.stats || null,
 		};
 
 		return NextResponse.json(quizInfo, { status: 200 });

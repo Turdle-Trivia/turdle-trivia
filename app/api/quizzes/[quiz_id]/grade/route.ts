@@ -92,6 +92,57 @@ export async function POST(req: Request, { params }: { params: Promise<{ quiz_id
 		// Determine if passing
 		const min_correct = quiz.min_correct || 0;
 		const is_passing_score = num_correct >= min_correct;
+		const score = Math.round(percent_correct * 100) / 100; // Round to 2 decimal places
+
+		// Update quiz stats
+		const currentStats = quiz.stats || {
+			num_attempts: 0,
+			num_passes: 0,
+			num_fails: 0,
+			high_score: 0,
+			low_score: 100,
+			avg_score: 0,
+			score_history: [],
+		};
+
+		// Calculate new stats
+		const newNumAttempts = currentStats.num_attempts + 1;
+		const newNumPasses = currentStats.num_passes + (is_passing_score ? 1 : 0);
+		const newNumFails = currentStats.num_fails + (is_passing_score ? 0 : 1);
+		const newHighScore = Math.max(currentStats.high_score, score);
+		const newLowScore = currentStats.num_attempts === 0 ? score : Math.min(currentStats.low_score, score);
+
+		// Calculate new average
+		const totalScoreSum = currentStats.avg_score * currentStats.num_attempts + score;
+		const newAvgScore = totalScoreSum / newNumAttempts;
+
+		// Add to score history (optional, but useful for detailed analytics)
+		const newScoreHistory = [
+			...(currentStats.score_history || []),
+			{
+				score: score,
+				timestamp: new Date(),
+				passed: is_passing_score,
+			},
+		];
+
+		// Update stats in database
+		await db.collection("quizzes").updateOne(
+			{ quiz_id: quiz_id },
+			{
+				$set: {
+					stats: {
+						num_attempts: newNumAttempts,
+						num_passes: newNumPasses,
+						num_fails: newNumFails,
+						high_score: newHighScore,
+						low_score: newLowScore,
+						avg_score: Math.round(newAvgScore * 100) / 100, // Round to 2 decimals
+						score_history: newScoreHistory,
+					},
+				},
+			}
+		);
 
 		// Build response
 		const response: any = {
@@ -102,6 +153,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ quiz_id
 			num_correct: num_correct,
 			percent_correct: percent_correct,
 			is_passing_score: is_passing_score,
+			score: score,
+			stats: {
+				num_attempts: newNumAttempts,
+				num_passes: newNumPasses,
+				num_fails: newNumFails,
+				high_score: newHighScore,
+				low_score: newLowScore,
+				avg_score: Math.round(newAvgScore * 100) / 100,
+				pass_rate: newNumAttempts > 0 ? Math.round((newNumPasses / newNumAttempts) * 100 * 100) / 100 : 0,
+			},
 		};
 
 		// Include code_value only if passing
