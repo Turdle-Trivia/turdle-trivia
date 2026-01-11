@@ -1,4 +1,3 @@
-// app/api/quizzes/route.ts
 import { NextResponse } from "next/server";
 import clientPromise from "@/app/lib/mongodb";
 import { generateQuizId } from "@/app/lib/generateQuizId";
@@ -118,6 +117,16 @@ export async function POST(req: Request) {
 			min_correct,
 			is_custom_quiz,
 			createdAt: new Date(),
+			// Initialize stats object
+			stats: {
+				num_attempts: 0,
+				num_passes: 0,
+				num_fails: 0,
+				high_score: 0,
+				low_score: 100, // Start with 100 since we'll take min of actual scores
+				avg_score: 0,
+				score_history: [], // Optional: track individual scores for more detailed stats
+			},
 		};
 
 		if (is_custom_quiz) {
