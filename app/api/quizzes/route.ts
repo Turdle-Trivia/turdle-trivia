@@ -26,10 +26,7 @@ export async function POST(req: Request) {
 		}
 
 		if (code_value.length == 0 || code_name.length == 0) {
-			return NextResponse.json(
-				{ error: "code_name and code_value must not be empty" },
-				{ status: 400 }
-			);
+			return NextResponse.json({ error: "code_name and code_value must not be empty" }, { status: 400 });
 		}
 
 		if (code_value.length > MAX_CODE_LENGTH || code_name.length > MAX_CODE_LENGTH) {
@@ -44,14 +41,17 @@ export async function POST(req: Request) {
 		}
 
 		if (min_correct < 0 || min_correct > num_questions) {
-			return NextResponse.json({ error: "min_correct must be between 0 and num_questions" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "min_correct must be between 0 and the number of questions" },
+				{ status: 400 }
+			);
 		}
 
 		// ---------- Custom quiz validation ----------
 		if (is_custom_quiz) {
 			if (!Array.isArray(questions) || questions.length !== num_questions) {
 				return NextResponse.json(
-					{ error: "Custom quiz must include questions array matching num_questions" },
+					{ error: "Custom quiz must include the number of questions specified" },
 					{ status: 400 }
 				);
 			}
