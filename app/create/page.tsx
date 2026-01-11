@@ -137,6 +137,12 @@ export default function Create() {
   return (
     <div className="bg-[#fff3da] min-h-dvh flex w-full items-center justify-center p-4">
       <main className="flex flex-col gap-8 w-full max-w-lg">
+        <h1 className="text-5xl mt-5 font-bold text-[#402100] text-center">
+          Create a Quiz
+        </h1>
+        <p className="text-[#402100]/80 text-center -mt-6 font-medium">
+          Fill out the form below to create your quiz.
+        </p>
         <div className="flex flex-col gap-2">
           <label htmlFor="goal" className="text-3xl font-bold text-[#402100]">
             Goal
@@ -292,6 +298,10 @@ export default function Create() {
                   "&:hover": {
                     borderColor: "#8B4513",
                   },
+                }),
+                option: (base) => ({
+                  ...base,
+                  color: "black",
                 }),
               }}
             />
