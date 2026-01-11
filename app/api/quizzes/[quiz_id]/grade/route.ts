@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/app/lib/mongodb";
 
-export async function POST(
-	req: Request,
-	{ params }: { params: Promise<{ quiz_id: string }> }
-) {
+export async function POST(req: Request, { params }: { params: Promise<{ quiz_id: string }> }) {
 	try {
 		const { quiz_id } = await params;
 
@@ -19,20 +16,14 @@ export async function POST(
 
 		// Validate answers array
 		if (!Array.isArray(answers)) {
-			return NextResponse.json(
-				{ error: "answers must be an array" },
-				{ status: 400 }
-			);
+			return NextResponse.json({ error: "answers must be an array" }, { status: 400 });
 		}
 
 		// Validate each answer object
 		for (const answer of answers) {
-			if (
-				typeof answer.question_id !== "number" ||
-				typeof answer.answer_id !== "string"
-			) {
+			if (typeof answer.question_id !== "number" || typeof answer.answer_id !== "number") {
 				return NextResponse.json(
-					{ error: "Each answer must have question_id (number) and answer_id (string)" },
+					{ error: "Each answer must have question_id (number) and answer_id (number)" },
 					{ status: 400 }
 				);
 			}
@@ -41,14 +32,15 @@ export async function POST(
 		// Fetch quiz from database
 		const client = await clientPromise;
 		const db = client.db();
-		const quiz = await db.collection("quizzes").findOne({ quiz_id });
+		const quizIdNum = parseInt(quiz_id);
+		const quiz = await db.collection("quizzes").findOne({ quiz_id: quizIdNum });
 
 		if (!quiz) {
 			return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
 		}
 
 		let questionsToGrade: any[] = [];
-        
+
 		if (quiz.is_custom_quiz) {
 			// Each custom quiz has its own questions array stored in the quiz document
 			if (!quiz.questions || !Array.isArray(quiz.questions)) {
@@ -62,9 +54,9 @@ export async function POST(
 			// Non-custom quizzes: fetch questions from the questions collection
 			const questions = await db
 				.collection("questions")
-				.find({ quiz_id })
+				.find({ question_id: { $in: answers.map((a) => a.question_id) } })
 				.toArray();
-			
+
 			if (!questions || questions.length === 0) {
 				return NextResponse.json(
 					{ error: "Quiz does not have questions available for grading" },
@@ -120,9 +112,6 @@ export async function POST(
 		return NextResponse.json(response, { status: 200 });
 	} catch (err) {
 		console.error(err);
-		return NextResponse.json(
-			{ error: "Failed to grade quiz" },
-			{ status: 500 }
-		);
+		return NextResponse.json({ error: "Failed to grade quiz" }, { status: 500 });
 	}
 }
