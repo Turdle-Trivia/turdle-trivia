@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/Button";
+import QRCode from "react-qr-code";
 
 export default function Page() {
   const { id } = useParams();
@@ -15,17 +16,20 @@ export default function Page() {
   const quizLink = `${origin}/quiz/take/${id}`;
 
   return (
-    <div className="bg-[#fff3da] h-dvh flex items-center justify-center">
+    <div className="bg-[#fff3da] h-full min-h-dvh flex items-center justify-center">
       <main className="flex flex-col items-center gap-6">
-        <p className="text-9xl">🎉</p>
-        <p className="text-[#402100] font-bold">
+        <p className="text-9xl mt-20">🎉</p>
+        <p className="text-[#402100] text-2xl font-bold">
           Congratulations! You've created a quiz with Turdle!
         </p>
-        <div className="flex flex-col gap-2 w-full max-w-lg">
-          <p className="text-[#402100] font-bold text-center">
+        <div className="flex flex-col gap-2 w-full h-full max-w-lg">
+          <p className="text-[#402100] -mt-2 font-bold text-center">
+            Your Quiz ID is {id}
+          </p>
+          <p className="text-[#402100] mt-5 font-bold text-center">
             Share this link with your friends:
           </p>
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-col items-center gap-2 h-full">
             <p className="flex-1 p-4 rounded-2xl border-2 border-[#8B4513] bg-white/50 text-[#402100] text-lg focus:outline-none">
               {quizLink}
             </p>
@@ -33,8 +37,8 @@ export default function Page() {
               className="px-8 py-3 mt-3
               bg-[#00b300]
               text-white
-                rounded-2xl
-                font-bold
+              rounded-2xl
+              font-bold
                 text-xl
                 shadow-lg
                 transition-all
@@ -53,9 +57,15 @@ export default function Page() {
             </button>
           </div>
         </div>
-        <Button href="/" backgroundColor="#8B4513" textColor="#fff">
-          Return Home
-        </Button>
+
+        <p className="text-[#402100] text-xl -mb-5 font-bold ">QR Code:</p>
+        <QRCode value={quizLink} size={256} />
+
+        <div className="mb-8 mt-3">
+          <Button href="/" backgroundColor="#8B4513" textColor="#fff">
+            Return Home
+          </Button>
+        </div>
       </main>
     </div>
   );
