@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/Button";
+import ReactConfetti from "react-confetti";
 
 interface AnswerChoice {
   answer_value: string;
@@ -18,6 +19,8 @@ interface Question {
 interface QuizData {
   code_name: string;
   questions: Question[];
+  min_correct: number;
+  num_questions: number;
 }
 
 interface GradeResponse {
@@ -44,6 +47,7 @@ export default function Page() {
       const response = await fetch(`/api/quizzes/${id}/questions`);
       const data = await response.json();
       setQuiz(data);
+      console.log(data);
     }
     getQuestions();
   }, [id]);
@@ -61,6 +65,15 @@ export default function Page() {
   if (result) {
     return (
       <div className="bg-[#fff3da] min-h-dvh flex items-center justify-center p-4">
+        {result.is_passing_score && (
+          <ReactConfetti
+            width={window.innerWidth}
+            height={window.innerHeight}
+            recycle={false}
+            numberOfPieces={500}
+            tweenDuration={10000}
+          />
+        )}
         <main className="flex flex-col items-center gap-6 w-full max-w-lg">
           <h1 className="text-3xl font-bold text-[#402100] text-center">
             {result.is_passing_score
@@ -113,6 +126,13 @@ export default function Page() {
               Solve this quiz to gain access to <br />
               <span className="text-[#8B4513]">{quiz.code_name}</span>
             </h1>
+            <p className="text-[#402100] text-center text-lg">
+              You must get at least{" "}
+              <span className="font-bold">
+                {quiz.min_correct}/{quiz.num_questions}
+              </span>{" "}
+              questions correct to pass the quiz.
+            </p>
             <Button
               onClick={() => setStarted(true)}
               backgroundColor="#00b300"
