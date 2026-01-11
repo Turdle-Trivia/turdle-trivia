@@ -15,6 +15,7 @@ export default function Create() {
   const [questionType, setQuestionType] = useState<"random" | "custom">(
     "random"
   );
+
   const [goal, setGoal] = useState("");
   const [prize, setPrize] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -51,8 +52,16 @@ export default function Create() {
       alert("Goal must be 100 characters or less");
       return;
     }
+    if (goal.length == 0) {
+      alert("Goal cannot be empty");
+      return;
+    }
     if (prize.length > 100) {
       alert("Prize must be 100 characters or less");
+      return;
+    }
+    if (prize.length == 0) {
+      alert("Prize cannot be empty");
       return;
     }
 
