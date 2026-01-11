@@ -25,6 +25,13 @@ export async function POST(req: Request) {
 			return NextResponse.json({ error: "Invalid or missing required fields" }, { status: 400 });
 		}
 
+		if (code_value.length == 0 || code_name.length == 0) {
+			return NextResponse.json(
+				{ error: "code_name and code_value must not be empty" },
+				{ status: 400 }
+			);
+		}
+
 		if (code_value.length > MAX_CODE_LENGTH || code_name.length > MAX_CODE_LENGTH) {
 			return NextResponse.json(
 				{ error: "code_name and code_value must be at most 100 characters" },
