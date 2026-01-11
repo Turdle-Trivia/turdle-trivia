@@ -21,15 +21,7 @@ export async function GET(
 		const quizzesCollection = db.collection("quizzes");
 
 		// Find the quiz by quiz_id
-		// Try parsing as number first, then fallback to string
-		const quizIdNum = parseInt(quiz_id);
-		let quiz;
-
-		if (!isNaN(quizIdNum)) {
-			quiz = await quizzesCollection.findOne({ quiz_id: quizIdNum });
-		} else {
-			quiz = await quizzesCollection.findOne({ quiz_id: quiz_id });
-		}
+		let quiz = await quizzesCollection.findOne({ quiz_id: quiz_id });
 
 		// If quiz not found
 		if (!quiz) {
