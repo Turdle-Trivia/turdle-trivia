@@ -144,6 +144,18 @@ export async function POST(req: Request, { params }: { params: Promise<{ quiz_id
 			}
 		);
 
+		let failure_message = null;
+		if (!is_passing_score) {
+			const failureMessages = await db
+				.collection("messages")
+				.aggregate([{ $match: { status: "failure" } }, { $sample: { size: 1 } }])
+				.toArray();
+			console.log(failureMessages);
+			if (failureMessages.length > 0) {
+				failure_message = failureMessages[0].message;
+			}
+		}
+
 		// Build response
 		const response: any = {
 			quiz_id: quiz.quiz_id,
@@ -153,6 +165,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ quiz_id
 			num_correct: num_correct,
 			percent_correct: percent_correct,
 			is_passing_score: is_passing_score,
+			failure_message: failure_message,
 			score: score,
 			stats: {
 				num_attempts: newNumAttempts,
