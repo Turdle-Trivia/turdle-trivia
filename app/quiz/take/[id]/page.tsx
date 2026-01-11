@@ -32,6 +32,7 @@ interface GradeResponse {
   percent_correct: number;
   is_passing_score: boolean;
   code_value?: string;
+  failure_message?: string;
   stats: {
     num_attempts: number;
     num_passes: number;
@@ -98,6 +99,12 @@ export default function Page() {
               ? "Congratulations!"
               : "Better luck next time!"}
           </h1>
+
+          {!result.is_passing_score && result.failure_message && (
+            <div className="bg-red-100 p-4 rounded-xl border-2 border-red-500 text-red-800 font-bold text-center w-full">
+              {result.failure_message}
+            </div>
+          )}
 
           <div className="bg-white/50 p-6 rounded-2xl border-2 border-[#8B4513] w-full text-center">
             <p className="text-xl text-[#402100] font-medium mb-4">
