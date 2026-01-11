@@ -52,6 +52,15 @@ export default function Page() {
     getQuestions();
   }, [id]);
 
+  useEffect(() => {
+    if (result) {
+      const audio = new Audio(
+        result.is_passing_score ? "/audio/fanfare.mp3" : "/audio/fart.mp3"
+      );
+      audio.play();
+    }
+  }, [result]);
+
   if (!quiz) {
     return (
       <div className="bg-[#fff3da] h-dvh flex items-center justify-center">
