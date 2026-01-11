@@ -1,7 +1,7 @@
 // app/api/quizzes/route.ts
 import { NextResponse } from "next/server";
 import clientPromise from "@/app/lib/mongodb";
-import { getNextQuizId } from "@/app/lib/getNextQuizId";
+import { generateQuizId } from "@/app/lib/generateQuizId";
 
 const MAX_QUESTIONS = 25;
 const MAX_CODE_LENGTH = 100;
@@ -100,7 +100,7 @@ export async function POST(req: Request) {
 		}
 
 		// ---------- Generate quiz_id ----------
-		const quiz_id = await getNextQuizId();
+		const quiz_id = await generateQuizId(code_name);
 
 		// ---------- Build quiz document ----------
 		const quiz: any = {

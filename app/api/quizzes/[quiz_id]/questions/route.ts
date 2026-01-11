@@ -18,15 +18,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 		const quizzesCollection = db.collection("quizzes");
 		const questionsCollection = db.collection("questions");
 
-		// Parse quiz_id
-		const quizIdNum = parseInt(quiz_id);
-		let quiz;
-
-		if (!isNaN(quizIdNum)) {
-			quiz = await quizzesCollection.findOne({ quiz_id: quizIdNum });
-		} else {
-			quiz = await quizzesCollection.findOne({ quiz_id: quiz_id });
-		}
+		let quiz = await quizzesCollection.findOne({ quiz_id: quiz_id });
 
 		// If quiz not found
 		if (!quiz) {
