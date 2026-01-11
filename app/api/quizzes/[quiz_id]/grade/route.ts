@@ -32,7 +32,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ quiz_id
 		// Fetch quiz from database
 		const client = await clientPromise;
 		const db = client.db();
-		const quizIdNum = parseInt(quiz_id);
+		const quizIdNum = quiz_id;
 		const quiz = await db.collection("quizzes").findOne({ quiz_id: quizIdNum });
 
 		if (!quiz) {
